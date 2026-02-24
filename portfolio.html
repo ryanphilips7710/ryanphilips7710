@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ryan Thomas Philips — Developer Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --green: #00ff9d;
+    --green-dim: #00cc7a;
+    --green-glow: rgba(0,255,157,0.3);
+    --amber: #ffb700;
+    --amber-glow: rgba(255,183,0,0.25);
+    --red: #ff4757;
+    --bg: #050a0e;
+    --bg2: #080f14;
+    --panel: #0a1520;
+    --panel2: #0d1e2e;
+    --border: #1a3a52;
+    --border-bright: #00ff9d44;
+    --text: #c8e6f0;
+    --text-dim: #5a8fa8;
+    --scanline: rgba(0,255,157,0.03);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* CRT scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      var(--scanline) 2px,
+      var(--scanline) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+    animation: scanPulse 8s ease-in-out infinite;
+  }
+
+  /* Noise texture overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+  }
+
+  @keyframes scanPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  /* ═══════════════════════════════
+     GRID BACKGROUND
+  ═══════════════════════════════ */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,157,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,157,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+  }
+
+  .grid-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, transparent 40%, var(--bg) 100%);
+  }
+
+  /* ═══════════════════════════════
+     BOOT SCREEN
+  ═══════════════════════════════ */
+  #boot {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: bootFade 0.5s ease 3.5s forwards;
+  }
+
+  @keyframes bootFade {
+    to { opacity: 0; pointer-events: none; }
+  }
+
+  .boot-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: #00ff9d;
+    text-align: left;
+    width: 480px;
+    max-width: 90vw;
+    line-height: 1.8;
+  }
+
+  .boot-line {
+    opacity: 0;
+    animation: bootLine 0.1s ease forwards;
+  }
+  .boot-line:nth-child(1)  { animation-delay: 0.1s; }
+  .boot-line:nth-child(2)  { animation-delay: 0.4s; }
+  .boot-line:nth-child(3)  { animation-delay: 0.7s; }
+  .boot-line:nth-child(4)  { animation-delay: 1.0s; }
+  .boot-line:nth-child(5)  { animation-delay: 1.3s; }
+  .boot-line:nth-child(6)  { animation-delay: 1.6s; }
+  .boot-line:nth-child(7)  { animation-delay: 1.9s; }
+  .boot-line:nth-child(8)  { animation-delay: 2.2s; }
+  .boot-line:nth-child(9)  { animation-delay: 2.5s; }
+  .boot-line:nth-child(10) { animation-delay: 2.8s; }
+
+  @keyframes bootLine { to { opacity: 1; } }
+
+  /* ═══════════════════════════════
+     NAV — skeuomorphic metal bar
+  ═══════════════════════════════ */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 56px;
+    background: linear-gradient(180deg,
+      #1a2e40 0%,
+      #0d1e2e 40%,
+      #091827 60%,
+      #0a1f30 100%
+    );
+    border-bottom: 1px solid var(--border);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.05) inset,
+      0 4px 30px rgba(0,0,0,0.8),
+      0 0 60px rgba(0,255,157,0.05);
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    gap: 32px;
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--green);
+    text-shadow: 0 0 20px var(--green-glow);
+    letter-spacing: 3px;
+    margin-right: auto;
+  }
+
+  .nav-links { display: flex; gap: 4px; }
+
+  .nav-btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 6px 14px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .nav-btn::before {
+    content: '>';
+    color: var(--green);
+    margin-right: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .nav-btn:hover {
+    color: var(--green);
+    border-color: var(--border-bright);
+    background: rgba(0,255,157,0.05);
+    text-shadow: 0 0 10px var(--green-glow);
+  }
+
+  .nav-btn:hover::before { opacity: 1; }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green), 0 0 16px var(--green-glow);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+
+  /* ═══════════════════════════════
+     MAIN LAYOUT
+  ═══════════════════════════════ */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px 60px;
+  }
+
+  /* ═══════════════════════════════
+     SKEUOMORPHIC PANEL
+  ═══════════════════════════════ */
+  .panel {
+    background: linear-gradient(145deg,
+      #0e1f30 0%,
+      #091525 50%,
+      #0b1c2c 100%
+    );
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 -1px 0 rgba(0,0,0,0.4),
+      0 4px 24px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  /* Panel corner screws — skeuomorphic detail */
+  .panel::before, .panel::after {
+    content: '⊕';
+    position: absolute;
+    font-size: 10px;
+    color: #1a3a52;
+    top: 8px;
+  }
+  .panel::before { left: 10px; }
+  .panel::after { right: 10px; }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg,
+      rgba(255,255,255,0.03) 0%,
+      transparent 100%
+    );
+  }
+
+  .panel-header-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.3), inset 0 -1px 1px rgba(0,0,0,0.4);
+  }
+  .dot-r { background: radial-gradient(circle at 40% 35%, #ff7070, #cc2222); }
+  .dot-y { background: radial-gradient(circle at 40% 35%, #ffd080, #cc9900); }
+  .dot-g { background: radial-gradient(circle at 40% 35%, #80ff80, #00aa33); }
+
+  .panel-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-left: 4px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .panel-body { padding: 28px 28px; }
+
+  /* ═══════════════════════════════
+     HERO SECTION
+  ═══════════════════════════════ */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    padding: 40px 40px;
+  }
+
+  .hero-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    text-shadow:
+      0 0 40px rgba(0,255,157,0.3),
+      0 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  h1 span { color: var(--green); }
+
+  .hero-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    color: var(--text-dim);
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .tagline {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--amber);
+    border-left: 3px solid var(--amber);
+    padding-left: 16px;
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  /* CRT Monitor — skeuomorphic */
+  .crt-monitor {
+    width: 220px;
+    flex-shrink: 0;
+  }
+
+  .monitor-shell {
+    background: linear-gradient(145deg, #1e3048, #0d1e30, #152840);
+    border-radius: 12px 12px 4px 4px;
+    padding: 12px;
+    box-shadow:
+      inset 0 2px 4px rgba(255,255,255,0.1),
+      inset 0 -2px 4px rgba(0,0,0,0.5),
+      0 8px 32px rgba(0,0,0,0.8),
+      0 2px 0 rgba(255,255,255,0.05);
+    border: 1px solid #2a4a6a;
+  }
+
+  .monitor-screen {
+    background: #000d18;
+    border-radius: 6px;
+    padding: 16px 12px;
+    border: 2px solid #0a1a28;
+    box-shadow:
+      inset 0 0 30px rgba(0,255,157,0.15),
+      inset 0 0 60px rgba(0,0,0,0.8),
+      0 0 20px rgba(0,255,157,0.1);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: #00ff9d;
+    line-height: 1.8;
+    min-height: 160px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .monitor-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba(0,255,157,0.04) 3px, rgba(0,255,157,0.04) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Glass reflection on screen */
+  .monitor-screen::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%);
+    border-radius: 4px 4px 0 0;
+    pointer-events: none;
+  }
+
+  .monitor-stand {
+    width: 60px;
+    height: 24px;
+    background: linear-gradient(180deg, #1a3048, #0d1e30);
+    margin: 0 auto;
+    border-radius: 0 0 4px 4px;
+    box-shadow: inset 0 -1px 2px rgba(0,0,0,0.5);
+  }
+
+  .monitor-base {
+    width: 100px;
+    height: 10px;
+    background: linear-gradient(180deg, #1a3048, #091525);
+    margin: 0 auto;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  }
+
+  .cursor-blink {
+    display: inline-block;
+    width: 7px; height: 11px;
+    background: #00ff9d;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ═══════════════════════════════
+     BUTTONS — metal skeuomorphic
+  ═══════════════════════════════ */
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .btn-primary {
+    background: linear-gradient(180deg, #1aff8f 0%, #00cc6a 40%, #009950 100%);
+    color: #002a14;
+    font-weight: bold;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      0 4px 12px rgba(0,255,100,0.3),
+      0 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(180deg, #33ffaa 0%, #00e07a 40%, #00b060 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      0 6px 20px rgba(0,255,100,0.5),
+      0 2px 4px rgba(0,0,0,0.5);
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active { transform: translateY(1px); box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
+
+  .btn-secondary {
+    background: linear-gradient(180deg, #1a3048 0%, #0d1e30 40%, #091525 100%);
+    color: var(--green);
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 -1px 0 rgba(0,0,0,0.4),
+      0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--green);
+    color: #fff;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      0 0 20px rgba(0,255,157,0.2),
+      0 2px 8px rgba(0,0,0,0.4);
+    transform: translateY(-1px);
+  }
+
+  /* ═══════════════════════════════
+     TERMINAL BLOCK
+  ═══════════════════════════════ */
+  .terminal {
+    background: #000c18;
+    border-radius: 4px;
+    border: 1px solid #0a2035;
+    box-shadow:
+      inset 0 0 40px rgba(0,0,0,0.6),
+      0 4px 20px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    background: linear-gradient(180deg, #1a2e42 0%, #0f2035 100%);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #0a2035;
+  }
+
+  .terminal-dots { display: flex; gap: 6px; }
+
+  .terminal-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: #3a6a8a;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .terminal-body {
+    padding: 20px 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .t-prompt { color: var(--green); }
+  .t-cmd { color: #fff; }
+  .t-comment { color: #2a5a7a; }
+  .t-key { color: var(--amber); }
+  .t-val { color: #7af0a0; }
+  .t-string { color: #f0b07a; }
+  .t-num { color: #7ab0f0; }
+  .t-line { display: block; }
+
+  /* ═══════════════════════════════
+     SKILL GAUGES — skeuomorphic
+  ═══════════════════════════════ */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .skill-card {
+    background: linear-gradient(145deg, #0d1e2e, #091525);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.04),
+      0 2px 8px rgba(0,0,0,0.5);
+    position: relative;
+  }
+
+  .skill-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .skill-icon {
+    font-size: 20px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(145deg, #1a3048, #0d1e30);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      0 2px 4px rgba(0,0,0,0.4);
+  }
+
+  .skill-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .skill-level {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-left: auto;
+  }
+
+  .gauge-track {
+    height: 8px;
+    background: linear-gradient(180deg, #000a14, #001020);
+    border-radius: 4px;
+    border: 1px solid #0a1e30;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .gauge-fill {
+    height: 100%;
+    border-radius: 3px;
+    position: relative;
+    transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+    animation: gaugeLoad 1.5s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+
+  @keyframes gaugeLoad {
+    from { width: 0 !important; }
+  }
+
+  .gauge-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px 3px 0 0;
+  }
+
+  .g-green { background: linear-gradient(90deg, #00cc6a, #00ff9d); box-shadow: 0 0 10px rgba(0,255,157,0.5); }
+  .g-amber { background: linear-gradient(90deg, #cc8800, #ffb700); box-shadow: 0 0 10px rgba(255,183,0,0.5); }
+  .g-blue  { background: linear-gradient(90deg, #0055cc, #0099ff); box-shadow: 0 0 10px rgba(0,153,255,0.5); }
+  .g-purple{ background: linear-gradient(90deg, #6600cc, #9933ff); box-shadow: 0 0 10px rgba(153,51,255,0.5); }
+
+  /* ═══════════════════════════════
+     PROJECT CARD — skeuomorphic
+  ═══════════════════════════════ */
+  .project-card {
+    background: linear-gradient(135deg, #0d1e30 0%, #091525 60%, #0a1c2c 100%);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      0 8px 32px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(0,0,0,0.3);
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), var(--amber), var(--green), transparent);
+    animation: scanH 4s linear infinite;
+    background-size: 200% 100%;
+  }
+
+  @keyframes scanH {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .proj-badge {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, rgba(0,255,157,0.15), rgba(0,255,157,0.05));
+    border: 1px solid rgba(0,255,157,0.3);
+    color: var(--green);
+    text-transform: uppercase;
+  }
+
+  .proj-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(0,255,157,0.2);
+  }
+
+  .proj-desc {
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .feat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .feat-item {
+    background: rgba(0,255,157,0.04);
+    border: 1px solid rgba(0,255,157,0.1);
+    border-radius: 4px;
+    padding: 12px 16px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+
+  .feat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .feat-val {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ═══════════════════════════════
+     LED STATUS INDICATORS
+  ═══════════════════════════════ */
+  .led-board {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .led-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .led {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow:
+      inset 0 1px 2px rgba(255,255,255,0.4),
+      inset 0 -1px 1px rgba(0,0,0,0.4);
+  }
+
+  .led::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    animation: ledGlow 2s ease-in-out infinite;
+  }
+
+  .led-green { background: radial-gradient(circle at 40% 35%, #80ffaa, #00cc55); }
+  .led-green::after { background: radial-gradient(circle, rgba(0,255,100,0.3), transparent 70%); }
+  .led-amber { background: radial-gradient(circle at 40% 35%, #ffe080, #cc8800); }
+  .led-amber::after { background: radial-gradient(circle, rgba(255,183,0,0.3), transparent 70%); }
+
+  @keyframes ledGlow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .led-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .led-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .led-status.active { color: var(--green); }
+  .led-status.learning { color: var(--amber); }
+
+  /* ═══════════════════════════════
+     SECTION HEADINGS
+  ═══════════════════════════════ */
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ═══════════════════════════════
+     CONNECT — VU meter style
+  ═══════════════════════════════ */
+  .connect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+  }
+
+  .connect-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    text-decoration: none;
+    border-radius: 5px;
+    background: linear-gradient(145deg, #0f2035, #091525);
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      0 2px 8px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .connect-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(0,255,157,0.06) 100%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .connect-btn:hover {
+    border-color: var(--border-bright);
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      0 8px 24px rgba(0,0,0,0.5),
+      0 0 20px rgba(0,255,157,0.1);
+  }
+
+  .connect-btn:hover::before { opacity: 1; }
+
+  .connect-icon {
+    font-size: 22px;
+    width: 38px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(145deg, #1a3048, #0d1e30);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      inset 0 -1px 0 rgba(0,0,0,0.3);
+    flex-shrink: 0;
+  }
+
+  .connect-info { display: flex; flex-direction: column; }
+  .connect-platform {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  .connect-handle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  /* ═══════════════════════════════
+     FOOTER
+  ═══════════════════════════════ */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: linear-gradient(180deg, transparent, rgba(0,255,157,0.02));
+  }
+
+  footer span { color: var(--green); }
+
+  /* ═══════════════════════════════
+     VU METER ANIMATION
+  ═══════════════════════════════ */
+  .vu-meter {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 30px;
+  }
+
+  .vu-bar {
+    width: 4px;
+    background: linear-gradient(0deg, #00ff9d, #00cc6a);
+    border-radius: 2px;
+    box-shadow: 0 0 6px rgba(0,255,157,0.5);
+    animation: vuAnim 0.6s ease-in-out infinite alternate;
+  }
+
+  .vu-bar:nth-child(1)  { height: 40%; animation-delay: 0.0s; }
+  .vu-bar:nth-child(2)  { height: 70%; animation-delay: 0.1s; }
+  .vu-bar:nth-child(3)  { height: 55%; animation-delay: 0.2s; }
+  .vu-bar:nth-child(4)  { height: 90%; animation-delay: 0.05s; background: linear-gradient(0deg, #ffb700, #ff4757); }
+  .vu-bar:nth-child(5)  { height: 75%; animation-delay: 0.15s; }
+  .vu-bar:nth-child(6)  { height: 50%; animation-delay: 0.25s; }
+  .vu-bar:nth-child(7)  { height: 80%; animation-delay: 0.08s; }
+  .vu-bar:nth-child(8)  { height: 60%; animation-delay: 0.18s; }
+  .vu-bar:nth-child(9)  { height: 45%; animation-delay: 0.12s; }
+  .vu-bar:nth-child(10) { height: 85%; animation-delay: 0.22s; background: linear-gradient(0deg, #ffb700, #ff4757); }
+
+  @keyframes vuAnim {
+    to { height: calc(var(--h) + 30%); opacity: 0.7; }
+  }
+
+  /* ═══════════════════════════════
+     GLITCH ANIMATION on hover
+  ═══════════════════════════════ */
+  .glitch {
+    position: relative;
+  }
+  .glitch:hover {
+    animation: glitch 0.3s steps(2) infinite;
+  }
+  @keyframes glitch {
+    0%   { text-shadow: 2px 0 var(--red), -2px 0 var(--green); }
+    33%  { text-shadow: -2px 0 var(--red), 2px 0 var(--green); }
+    66%  { text-shadow: 2px 2px var(--amber), -2px -2px #0099ff; }
+    100% { text-shadow: none; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; }
+    .crt-monitor { display: none; }
+    nav { padding: 0 16px; gap: 8px; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BOOT SCREEN -->
+<div id="boot">
+  <div class="boot-text">
+    <div class="boot-line">> RYAN_OS v2.0 — BOOT SEQUENCE INITIATED</div>
+    <div class="boot-line">> Loading kernel modules... <span style="color:#ffb700">OK</span></div>
+    <div class="boot-line">> Mounting file systems... <span style="color:#00ff9d">DONE</span></div>
+    <div class="boot-line">> Initializing neural interface... <span style="color:#00ff9d">DONE</span></div>
+    <div class="boot-line">> Loading skill modules: Python, C++, JS... <span style="color:#00ff9d">OK</span></div>
+    <div class="boot-line">> Spectrum audio engine... <span style="color:#00ff9d">ONLINE</span></div>
+    <div class="boot-line">> AI/ML subsystems... <span style="color:#00ff9d">READY</span></div>
+    <div class="boot-line">> Startup mode: <span style="color:#ffb700">FOUNDER</span></div>
+    <div class="boot-line">> ─────────────────────────────────────</div>
+    <div class="boot-line">> Welcome, <span style="color:#00ff9d">RYAN THOMAS PHILIPS</span> <span class="cursor-blink"></span></div>
+  </div>
+</div>
+
+<!-- GRID BACKGROUND -->
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">RTP.DEV</div>
+  <div class="nav-links">
+    <a href="#about" class="nav-btn">ABOUT</a>
+    <a href="#skills" class="nav-btn">SKILLS</a>
+    <a href="#project" class="nav-btn">PROJECTS</a>
+    <a href="#connect" class="nav-btn">CONNECT</a>
+  </div>
+  <div class="status-dot"></div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── HERO ── -->
+  <div class="panel" id="about">
+    <div class="panel-header">
+      <div class="panel-header-dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="panel-title">// SYSTEM :: USER_PROFILE</div>
+    </div>
+    <div class="hero">
+      <div>
+        <div class="hero-label">// IDENTIFIED_USER</div>
+        <h1 class="glitch">RYAN<br/><span>THOMAS</span><br/>PHILIPS</h1>
+        <p class="hero-sub">CSE (AI-ML) Student &nbsp;·&nbsp; Creative Technologist &nbsp;·&nbsp; Future Founder</p>
+        <p class="tagline">
+          "Technology should not only solve problems<br/>
+          but deliver experiences that feel intuitive,<br/>
+          creative, and human."
+        </p>
+        <div class="btn-row">
+          <a href="#connect" class="btn btn-primary">⬡ CONNECT</a>
+          <a href="#project" class="btn btn-secondary">▶ VIEW PROJECTS</a>
+        </div>
+      </div>
+      <div class="crt-monitor">
+        <div class="monitor-shell">
+          <div class="monitor-screen">
+            <div>> status: <span style="color:#00ff9d">ONLINE</span></div>
+            <div>> mode: <span style="color:#ffb700">BUILDING</span></div>
+            <div>> learning: JS + React</div>
+            <div>> open_to: internships</div>
+            <div>> goal: startup 🚀</div>
+            <br/>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <div class="vu-meter">
+                <div class="vu-bar"></div><div class="vu-bar"></div>
+                <div class="vu-bar"></div><div class="vu-bar"></div>
+                <div class="vu-bar"></div><div class="vu-bar"></div>
+                <div class="vu-bar"></div><div class="vu-bar"></div>
+                <div class="vu-bar"></div><div class="vu-bar"></div>
+              </div>
+              <span style="font-size:9px; color:#2a5a7a;">SPECTRUM</span>
+            </div>
+            <br/>
+            <div><span class="cursor-blink"></span></div>
+          </div>
+        </div>
+        <div class="monitor-stand"></div>
+        <div class="monitor-base"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WHO AM I — terminal ── -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-header-dots">
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      </div>
+      <div class="panel-title">// ryan_profile.py — bash</div>
+    </div>
+    <div class="panel-body">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dots">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+          </div>
+          <div class="terminal-title">python3 ryan_profile.py</div>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line"><span class="t-comment"># ─── Ryan Thomas Philips :: System Init ───────────────────</span></span>
+          <span class="t-line"></span>
+          <span class="t-line"><span class="t-key">class </span><span class="t-cmd">Ryan</span>:</span>
+          <span class="t-line">    <span class="t-key">name</span>     = <span class="t-string">"Ryan Thomas Philips"</span></span>
+          <span class="t-line">    <span class="t-key">degree</span>   = <span class="t-string">"CSE (Artificial Intelligence & Machine Learning)"</span></span>
+          <span class="t-line">    <span class="t-key">location</span> = <span class="t-string">"India 🇮🇳"</span></span>
+          <span class="t-line">    <span class="t-key">learning</span> = [<span class="t-string">"JavaScript"</span>, <span class="t-string">"React.js"</span>]</span>
+          <span class="t-line">    <span class="t-key">loves</span>    = [<span class="t-string">"Creative Tech"</span>, <span class="t-string">"Open Source"</span>, <span class="t-string">"Music"</span>]</span>
+          <span class="t-line">    <span class="t-key">mission</span>  = <span class="t-string">"Build my own people-first startup 🚀"</span></span>
+          <span class="t-line">    <span class="t-key">open_to</span>  = [<span class="t-string">"Internships"</span>, <span class="t-string">"Collabs"</span>, <span class="t-string">"Cool Projects"</span>]</span>
+          <span class="t-line"></span>
+          <span class="t-line">    <span class="t-key">def </span><span class="t-cmd">current_vibe</span>(self):</span>
+          <span class="t-line">        <span class="t-key">return </span><span class="t-string">"Turning caffeine into code ☕→💻"</span></span>
+          <span class="t-line"></span>
+          <span class="t-line"><span class="t-prompt">>>> </span><span class="t-cmd">Ryan().current_vibe()</span></span>
+          <span class="t-line"><span class="t-val">'Turning caffeine into code ☕→💻'</span></span>
+          <span class="t-line"><span class="t-prompt">>>> </span><span class="cursor-blink"></span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SKILLS ── -->
+  <div id="skills">
+    <div class="section-label">// MODULE_02</div>
+    <h2>SKILL MATRIX</h2>
+    <div class="skills-grid" style="margin-bottom:24px;">
+
+      <div class="skill-card">
+        <div class="skill-header">
+          <div class="skill-icon">🐍</div>
+          <div class="skill-name">Python</div>
+          <div class="skill-level">PROFICIENT</div>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill g-green" style="width:82%"></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-header">
+          <div class="skill-icon">⚙️</div>
+          <div class="skill-name">C / C++</div>
+          <div class="skill-level">SOLID</div>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill g-blue" style="width:75%"></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-header">
+          <div class="skill-icon">🌐</div>
+          <div class="skill-name">HTML / CSS</div>
+          <div class="skill-level">STRONG</div>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill g-green" style="width:78%"></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-header">
+          <div class="skill-icon">🗄️</div>
+          <div class="skill-name">MySQL</div>
+          <div class="skill-level">COMPETENT</div>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill g-amber" style="width:65%"></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-header">
+          <div class="skill-icon">⚡</div>
+          <div class="skill-name">JavaScript</div>
+          <div class="skill-level">LEARNING</div>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill g-amber" style="width:55%"></div>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-header">
+          <div class="skill-icon">⚛️</div>
+          <div class="skill-name">React.js</div>
+          <div class="skill-level">LEARNING</div>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill g-purple" style="width:40%"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- LED status board -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-header-dots">
+          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+        </div>
+        <div class="panel-title">// STATUS :: SYSTEM_MODULES</div>
+      </div>
+      <div class="panel-body">
+        <div class="led-board">
+          <div class="led-row">
+            <div class="led led-green"></div>
+            <div class="led-label">Python / AI-ML Core</div>
+            <div class="led-status active">● ONLINE</div>
+          </div>
+          <div class="led-row">
+            <div class="led led-green"></div>
+            <div class="led-label">Frontend Dev (HTML/CSS)</div>
+            <div class="led-status active">● ONLINE</div>
+          </div>
+          <div class="led-row">
+            <div class="led led-green"></div>
+            <div class="led-label">C / C++ Systems</div>
+            <div class="led-status active">● ONLINE</div>
+          </div>
+          <div class="led-row">
+            <div class="led led-green"></div>
+            <div class="led-label">MySQL Database</div>
+            <div class="led-status active">● ONLINE</div>
+          </div>
+          <div class="led-row">
+            <div class="led led-amber"></div>
+            <div class="led-label">JavaScript</div>
+            <div class="led-status learning">◉ LOADING... 55%</div>
+          </div>
+          <div class="led-row">
+            <div class="led led-amber"></div>
+            <div class="led-label">React.js</div>
+            <div class="led-status learning">◉ LOADING... 40%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROJECT ── -->
+  <div id="project">
+    <div class="section-label">// MODULE_03</div>
+    <h2>FEATURED PROJECT</h2>
+    <div class="project-card">
+      <div class="proj-badge">★ FLAGSHIP BUILD</div>
+      <div class="proj-title">🎵 SPECTRUM</div>
+      <p class="proj-desc">
+        A full-featured music application engineered with a pixel-perfect UI and a real-time audio frequency visualizer. Spectrum turns every track into a visual experience — where sound becomes light, rhythm becomes motion, and music becomes immersive.
+      </p>
+      <div class="feat-grid">
+        <div class="feat-item">
+          <div class="feat-label">// DESIGN</div>
+          <div class="feat-val">Clean Minimal UI</div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-label">// ENGINE</div>
+          <div class="feat-val">Real-Time Visualizer</div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-label">// FOCUS</div>
+          <div class="feat-val">Form + Function</div>
+        </div>
+        <div class="feat-item">
+          <div class="feat-label">// GOAL</div>
+          <div class="feat-val">Immersive Experience</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <a href="#" class="btn btn-primary">▶ LAUNCH APP</a>
+        <a href="#" class="btn btn-secondary">{ } VIEW CODE</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CONNECT ── -->
+  <div id="connect" style="margin-top:32px;">
+    <div class="section-label">// MODULE_04</div>
+    <h2>ESTABLISH CONNECTION</h2>
+    <div class="connect-grid">
+      <a href="https://linkedin.com/in/YOUR_LINKEDIN" class="connect-btn">
+        <div class="connect-icon">💼</div>
+        <div class="connect-info">
+          <div class="connect-platform">LinkedIn</div>
+          <div class="connect-handle">@ryanthomasphilips</div>
+        </div>
+      </a>
+      <a href="https://github.com/YOUR_USERNAME" class="connect-btn">
+        <div class="connect-icon">🐙</div>
+        <div class="connect-info">
+          <div class="connect-platform">GitHub</div>
+          <div class="connect-handle">@YOUR_USERNAME</div>
+        </div>
+      </a>
+      <a href="mailto:your@email.com" class="connect-btn">
+        <div class="connect-icon">📡</div>
+        <div class="connect-info">
+          <div class="connect-platform">Email</div>
+          <div class="connect-handle">Ping me directly</div>
+        </div>
+      </a>
+      <a href="#" class="connect-btn">
+        <div class="connect-icon">🌐</div>
+        <div class="connect-info">
+          <div class="connect-platform">Portfolio</div>
+          <div class="connect-handle">yourportfolio.dev</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>RYAN THOMAS PHILIPS</span> &nbsp;·&nbsp; CSE (AI-ML) &nbsp;·&nbsp; INDIA &nbsp;·&nbsp;
+  <span>BUILT WITH PURPOSE</span><br/><br/>
+  <span style="color:#1a3a52; font-size:10px;">
+    // "The best way to predict the future is to build it." — Alan Kay
+  </span>
+</footer>
+
+<script>
+  // Particle field
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.4';
+  document.body.prepend(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function Particle() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.size = Math.random() * 1.5 + 0.5;
+    this.alpha = Math.random() * 0.5 + 0.1;
+  }
+
+  function initParticles() {
+    particles = Array.from({length: 80}, () => new Particle());
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,255,157,${p.alpha})`;
+      ctx.fill();
+    });
+
+    // Draw connections
+    particles.forEach((p, i) => {
+      particles.slice(i+1).forEach(q => {
+        const d = Math.hypot(p.x-q.x, p.y-q.y);
+        if (d < 100) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(0,255,157,${0.08 * (1 - d/100)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      });
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initParticles();
+  draw();
+  window.addEventListener('resize', () => { resize(); initParticles(); });
+
+  // Gauge animation on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.animationPlayState = 'running';
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.gauge-fill').forEach(g => {
+    g.style.animationPlayState = 'paused';
+    observer.observe(g);
+  });
+</script>
+</body>
+</html>
