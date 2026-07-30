@@ -29,7 +29,7 @@ class Ryan:
 
     currently  = {
         "learning"  : ["JavaScript", "React.js"],
-        "building"  : "Spectrum — Real-Time Music Visualizer 🎵",
+        "building"  : "JARVIS- AI System Assistant",
         "open_to"   : ["Internships", "Collaborations", "Cool Projects"],
     }
 
